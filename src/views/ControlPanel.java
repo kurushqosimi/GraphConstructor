@@ -10,8 +10,6 @@ import static views.MainFrame.*;
 public class ControlPanel extends JPanel {
     private final JTextField xMinInterval;
     private final JTextField xMaxInterval;
-    private final JTextField yMinInterval;
-    private final JTextField yMaxInterval;
     private double markerSpacing = 1.0;
     private final JCheckBox gridCheckBox;
     private Color gridColor = Color.GRAY;
@@ -48,12 +46,6 @@ public class ControlPanel extends JPanel {
         xMinInterval.setText("-10");
         xMaxInterval.setText("10");
 
-        JLabel yIntervalLabel = new JLabel("Интервал Y:");
-        yMinInterval = new JTextField(5);
-        yMaxInterval = new JTextField(5);
-        yMinInterval.setText("-10");
-        yMaxInterval.setText("10");
-
         JButton colorButton = new JButton("Выбрать цвет");
         JButton gridColorButton = new JButton("Выбрать цвет сетки");
         gridCheckBox = new JCheckBox("Показать сетку");
@@ -66,9 +58,6 @@ public class ControlPanel extends JPanel {
         add(xIntervalLabel);
         add(xMinInterval);
         add(xMaxInterval);
-        add(yIntervalLabel);
-        add(yMinInterval);
-        add(yMaxInterval);
         add(colorButton);
         add(gridColorButton);
         add(gridCheckBox);
@@ -114,10 +103,8 @@ public class ControlPanel extends JPanel {
         plotButton.addActionListener(e -> {
             double xMin = Double.parseDouble(xMinInterval.getText());
             double xMax = Double.parseDouble(xMaxInterval.getText());
-            double yMin = Double.parseDouble(yMinInterval.getText());
-            double yMax = Double.parseDouble(yMaxInterval.getText());
             scalePanel.scaleSlider.setValue(1);
-            graphPanel.updateSettings((String) functionBox.getSelectedItem(), (String) lineStyleBox.getSelectedItem(), lineColor, gridColor, gridCheckBox.isSelected(), xMin, xMax, yMin, yMax);
+            graphPanel.updateSettings((String) functionBox.getSelectedItem(), (String) lineStyleBox.getSelectedItem(), lineColor, gridColor, gridCheckBox.isSelected(), xMin, xMax);
         });
     }
 

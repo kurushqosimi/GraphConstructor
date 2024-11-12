@@ -37,7 +37,7 @@ public class GraphPanel extends JPanel {
     }
 
 
-    public void updateSettings(String functionType, String lineStyle, Color lineColor, Color gridColor, boolean showGrid, double xMin, double xMax, double yMin, double yMax) {
+    public void updateSettings(String functionType, String lineStyle, Color lineColor, Color gridColor, boolean showGrid, double xMin, double xMax) {
         this.functionType = functionType;
         this.lineStyle = lineStyle;
         this.lineColor = lineColor;
@@ -47,8 +47,8 @@ public class GraphPanel extends JPanel {
         // Обновляем текущие диапазоны
         this.xMin = xMin;
         this.xMax = xMax;
-        this.yMin = yMin;
-        this.yMax = yMax;
+
+        calculateYBounds();
 
         // Обновляем начальные значения для масштабирования
         this.initialXMin = xMin;
@@ -64,6 +64,25 @@ public class GraphPanel extends JPanel {
 
         repaint();
     }
+
+    private void calculateYBounds() {
+        DoubleUnaryOperator function = getFunction();
+        double calculatedYMin = Double.MAX_VALUE;
+        double calculatedYMax = Double.MIN_VALUE;
+
+        for (double x = xMin; x <= xMax; x += 0.1) {
+            double y = function.applyAsDouble(x);
+
+            if (!Double.isNaN(y) && !Double.isInfinite(y) && Math.abs(y) < 1e6) {
+                calculatedYMin = Math.min(calculatedYMin, y);
+                calculatedYMax = Math.max(calculatedYMax, y);
+            }
+        }
+
+        this.yMin = calculatedYMin;
+        this.yMax = calculatedYMax;
+    }
+
 
 
     @Override
@@ -106,6 +125,8 @@ public class GraphPanel extends JPanel {
             int yPixel = height + padding - (int) ((y - yMin) / yRange * height);
             g.drawLine(padding, yPixel, width + padding, yPixel);
         }
+        int yPixel = height + padding - (int) ((yMax - yMin) / yRange * height);
+        g.drawLine(padding, yPixel, width + padding, yPixel);
     }
 
     private void drawAxes(Graphics2D g, int width, int height) {
@@ -131,6 +152,9 @@ public class GraphPanel extends JPanel {
             g.drawLine(originX - 5, yPixel, originX + 5, yPixel);
             g.drawString(String.format("%.1f", y), originX - 30, yPixel + 5);
         }
+        int yPixel = height + padding - (int) ((yMax - yMin) / yRange * height);
+        g.drawLine(originX - 5, yPixel, originX + 5, yPixel);
+        g.drawString(String.format("%.1f", yMax), originX - 30, yPixel + 5);
     }
 
     private void drawFunction(Graphics2D g, DoubleUnaryOperator function, int width, int height) {
